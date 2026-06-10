@@ -5,8 +5,6 @@ public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private float moveSpeed = 5f;
 
-    public Vector3 dir = Vector3.zero;
-
     void Update()
     {
         Vector2 inputVector = Vector2.zero;
@@ -27,6 +25,9 @@ public class PlayerMovement : MonoBehaviour
         if (moveDir.magnitude > 0)
         {
             transform.Translate(moveDir * moveSpeed * Time.deltaTime, Space.World);
+            Quaternion playerLook = Quaternion.LookRotation(moveDir);
+            transform.rotation = Quaternion.Slerp(transform.rotation, playerLook, 4f * Time.deltaTime);
         }
+
     }
 }

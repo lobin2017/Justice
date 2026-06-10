@@ -1,62 +1,42 @@
+using Portfolio;
+using System;
 using UnityEngine;
-using UnityEngine.InputSystem; 
+using UnityEngine.InputSystem;
 
 public class PlayerAttack : MonoBehaviour
 {
-    [Header("공격 설정")]
-    [SerializeField] private float attackDamage = 15f;
-    [SerializeField] private float attackRadius = 2.5f; 
-    [Range(0, 360)]
-    [SerializeField] private float attackAngle = 120f;  
+    [SerializeField] private Transform enemy;
 
-    [Header("레이어 설정")]
-    [SerializeField] private LayerMask enemyLayer; 
+    [SerializeField] private float weaponDamage = 5f;
+    [SerializeField] private float attackDistance = 2.5f;
 
-    public void OnAttack(InputValue value)
+    public void OnAttack()
     {
-        if (value.isPressed)
+        if (Keyboard.current.oKey.wasPressedThisFrame)
         {
             PerformAttack();
         }
     }
-
-    private void PerformAttack()
+    public void PerformAttack()
     {
-        Debug.Log("플레이어 공격 발동!");
+        Vector3 paDistance = enemy.position - transform.position;
+        float sqrDistance = paDistance.sqrMagnitude;
+        float attackSqr = attackDistance * attackDistance;
 
-        Collider[] hitEnemies = Physics.OverlapSphere(transform.position, attackRadius, enemyLayer);
-
-        foreach (Collider enemyCollider in hitEnemies)
+        if (sqrDistance < attackSqr)
         {
-            Vector3 directionToEnemy = (enemyCollider.transform.position - transform.position).normalized;
-
-            directionToEnemy.y = 0;
-            Vector3 forward = transform.forward;
-            forward.y = 0;
-
-            float dot = Vector3.Dot(forward, directionToEnemy);
-            float cosAngle = Mathf.Cos((attackAngle * 0.5f) * Mathf.Deg2Rad);
-
-            if (dot >= cosAngle)
-            {
-                if (enemyCollider.TryGetComponent<IDamageable>(out var damageable))
-                {
-                    damageable.TakeDamage(attackDamage);
-                }
-            }
+            IDamageable damageable = enemy.GetComponent<IDamageable>();
+            damageable.TakeDamage(weaponDamage);
+            Debug.Log($"{gameObject.name}의 공격");
+        }
+        else
+        {
+            Debug.Log($"{gameObject.name}공격 범위 밖");
         }
     }
-
-    private void OnDrawGizmosSelected()
+    void Update()
     {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, attackRadius);
+        OnAttack();
 
-        Vector3 leftBoundary = Quaternion.Euler(0, -attackAngle * 0.5f, 0) * transform.forward;
-        Vector3 rightBoundary = Quaternion.Euler(0, attackAngle * 0.5f, 0) * transform.forward;
-
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawLine(transform.position, transform.position + leftBoundary * attackRadius);
-        Gizmos.DrawLine(transform.position, transform.position + rightBoundary * attackRadius);
     }
 }
