@@ -764,6 +764,8 @@ MonoBehaviour:
   enemy: {fileID: 1413167700}
   weaponDamage: 5
   attackDistance: 3
+  weaponDelay: 1
+  sightAngle: 45
 --- !u!114 &921083231
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -4,7 +4,6 @@ using UnityEngine.InputSystem;
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private float moveSpeed = 5f;
-
     void Update()
     {
         Vector2 inputVector = Vector2.zero;
@@ -28,6 +27,5 @@ public class PlayerMovement : MonoBehaviour
             Quaternion playerLook = Quaternion.LookRotation(moveDir);
             transform.rotation = Quaternion.Slerp(transform.rotation, playerLook, 4f * Time.deltaTime);
         }
-
     }
 }
