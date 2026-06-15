@@ -10,10 +10,12 @@ namespace Monster
         [SerializeField] private float attackCooldown = 2f;
         private float lastAttackTime;
         private MonsterSight monsterSight;
+        private IDamageable damageable;
 
         public void Awake()
         {
             monsterSight = GetComponent<MonsterSight>();
+            damageable = GetComponent<IDamageable>();
         }
         public void OnAttack()
         {
@@ -28,7 +30,6 @@ namespace Monster
         }
         public void PerformAttack()
         {
-            IDamageable damageable = player.GetComponent<IDamageable>();
             if (damageable != null)
             {
                 damageable.TakeDamage(attackDamage);
@@ -38,7 +39,6 @@ namespace Monster
         void Update()
         {
             OnAttack();
-
         }
     }
 }

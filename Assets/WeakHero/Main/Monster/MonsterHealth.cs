@@ -7,7 +7,7 @@ namespace Monster
     {
         [SerializeField] private float maxHp = 20f;
         public float MaxHp => maxHp;
-        public float CurrentHp { get; private set; }
+        public float CurrentHp { get; set; }
 
         public event Action OnDeath;
 
