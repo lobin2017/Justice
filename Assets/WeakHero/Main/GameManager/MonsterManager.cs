@@ -5,12 +5,13 @@ using System.Collections.Generic;
 public class MonsterManager : MonoBehaviour
 {
     public List<MonsterHealth> monsters = new List<MonsterHealth>();
-    
+
     void Start()
     {
+        Debug.Log("몬스터 출현");
         foreach (MonsterHealth monster in monsters)
         {
-            print($"{monster.name} 체력 : {monster.CurrentHp}");
+            Debug.Log($"{monster.name} 체력 : {monster.CurrentHp}");
         }
     }
     void Update()
@@ -21,6 +22,10 @@ public class MonsterManager : MonoBehaviour
             {
                 monsters.RemoveAt(i);
                 Debug.Log($"남은 몬스터 수 : {monsters.Count}");
+            }
+            if (monsters.Count <= 0)
+            {
+                Debug.Log("몬스터 토벌 완료!");
             }
         }
     }
