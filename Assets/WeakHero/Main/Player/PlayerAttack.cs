@@ -59,9 +59,10 @@ public class PlayerAttack : MonoBehaviour
     public void PerformAttack()
     {
         if (monsterManager == null || monsterManager.monsters.Count == 0)
+        {
 
             return;
-
+        }
         foreach (MonsterHealth monster in monsterManager.monsters)
         {
             if (monster == null) continue;
