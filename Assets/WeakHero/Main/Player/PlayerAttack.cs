@@ -9,7 +9,7 @@ public class PlayerAttack : MonoBehaviour
     [SerializeField] private float weaponDamage = 5f;
     [SerializeField] private float attackDistance = 3f;
     [SerializeField] private float weaponDelay = 1f;
-    [SerializeField] private float attackAngle = 90f;
+    [SerializeField] private float attackAngle = 70f;
     [SerializeField] private float slerpSpeed = 8f;
 
     private float lastWeaponAttackTime;
@@ -27,7 +27,7 @@ public class PlayerAttack : MonoBehaviour
     {
         inputActions.Player.Disable();
     }
-    private void HandleAming()
+    private void HandleAiming()
     {
         Vector2 mouseScreenPos = inputActions.Player.Aim.ReadValue<Vector2>();
         Ray ray = Camera.main.ScreenPointToRay(mouseScreenPos);
@@ -59,35 +59,35 @@ public class PlayerAttack : MonoBehaviour
     public void PerformAttack()
     {
         if (monsterManager == null || monsterManager.monsters.Count == 0)
-        {
+
             return;
 
-            foreach (MonsterHealth monster in monsterManager.monsters)
+        foreach (MonsterHealth monster in monsterManager.monsters)
+        {
+            if (monster == null) continue;
+
+            Vector3 directionToMonster = monster.transform.position - transform.position;
+            float distanceSqr = directionToMonster.sqrMagnitude;
+            float attackRangeSqr = attackDistance * attackDistance;
+
+            if (distanceSqr > attackRangeSqr)
+                continue;
+
+            directionToMonster.Normalize();
+            float dot = Vector3.Dot(transform.forward, directionToMonster);
+            float cosAngle = Mathf.Cos(attackAngle * Mathf.Deg2Rad);
+
+            if (dot > cosAngle)
             {
-                if (monster == null) continue;
-
-                Vector3 directionToMonster = monster.transform.position - transform.position;
-                float distanceSqr = directionToMonster.sqrMagnitude;
-                float attackRangeSqr = attackDistance * attackDistance;
-
-                if (distanceSqr > attackRangeSqr)
-                    continue;
-
-                directionToMonster.Normalize();
-                float dot = Vector3.Dot(transform.forward, directionToMonster);
-                float cosAngle = Mathf.Cos(attackAngle * Mathf.Deg2Rad);
-
-                if (dot > cosAngle)
-                {
-                    monster.TakeDamage(weaponDamage);
-                    Debug.Log($"{monster.name} 에게 {weaponDamage} 데미지");
-                }
+                monster.TakeDamage(weaponDamage);
+                Debug.Log($"{monster.name} 에게 {weaponDamage} 데미지");
             }
         }
+
     }
     void Update()
     {
-        HandleAming();
+        HandleAiming();
         HandleAttackInput();
     }
 }

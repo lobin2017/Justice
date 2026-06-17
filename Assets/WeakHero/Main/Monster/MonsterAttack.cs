@@ -10,12 +10,12 @@ namespace Monster
         [SerializeField] private float attackCooldown = 2f;
         private float lastAttackTime;
         private MonsterSight monsterSight;
-        private IDamageable damageable;
+        private PlayerHealth playerHealth;
 
-        public void Awake()
+        private void Awake()
         {
             monsterSight = GetComponent<MonsterSight>();
-            damageable = GetComponent<IDamageable>();
+            playerHealth = player.GetComponent<PlayerHealth>();
         }
         public void OnAttack()
         {
@@ -30,9 +30,9 @@ namespace Monster
         }
         public void PerformAttack()
         {
-            if (damageable != null)
+            if (playerHealth != null)
             {
-                damageable.TakeDamage(attackDamage);
+                playerHealth.TakeDamage(attackDamage);
                 Debug.Log($"{gameObject.name}의 공격");
             }
         }
