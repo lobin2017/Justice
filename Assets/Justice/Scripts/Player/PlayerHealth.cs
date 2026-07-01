@@ -2,7 +2,8 @@ using UnityEngine;
 
 public class PlayerHealth : MonoBehaviour, IDamageable
 {
-    private float maxHp = 200f;
+    [Header("Health Settings")]
+    [SerializeField] private float maxHp = 200f; 
 
     public float MaxHp => maxHp;
     public float CurrentHp { get; private set; }
@@ -34,7 +35,6 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         if (isDead) return;
 
         isDead = true;
-
         Debug.Log("플레이어 사망");
 
         gameObject.SetActive(false);

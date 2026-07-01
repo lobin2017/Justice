@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
 {
+    [Header("Target Tracking")]
     [SerializeField] private Transform target;
     [SerializeField] private float lerpSpeed = 8f;
 

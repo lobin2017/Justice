@@ -1,48 +1,52 @@
 using UnityEngine;
-using System;
 
 namespace Boss
 {
-    public class BossHealth : MonoBehaviour, IDamageable
+    public class BossHealth : MonoBehaviour
     {
-        [SerializeField] private float maxHp = 20f;
-        public float MaxHp => maxHp;
-        public float CurrentHp { get; set; }
-
-        public event Action OnDeath;
-
+        private float maxHealth;
+        private float currentHealth;
         private bool isDead = false;
+        private bool isPhase2Triggered = false;
+
+        private BossController controller;
+        private BossAnimation animationCtrl;
 
         private void Awake()
         {
-            CurrentHp = maxHp;
+            controller = GetComponent<BossController>();
+            animationCtrl = GetComponent<BossAnimation>();
         }
 
-        public void TakeDamage(float damageAmount)
+        public void InitializeHealth(float maxHp)
+        {
+            maxHealth = maxHp;
+            currentHealth = maxHealth;
+            isDead = false;
+            isPhase2Triggered = false;
+        }
+
+        public void TakeDamage(float damage)
         {
             if (isDead) return;
 
-            CurrentHp -= damageAmount;
-            CurrentHp = Mathf.Clamp(CurrentHp, 0, maxHp);
+            currentHealth -= damage;
+            if (animationCtrl != null) animationCtrl.PlayHit();
 
-            Debug.Log($"{gameObject.name}이(가) {damageAmount}의 피해를 입었습니다. 남은 HP: {CurrentHp}");
-
-            if (CurrentHp <= 0)
+            // 1. 페이즈 전환 체크 (체력 50% 이하 조건)
+            if (!isPhase2Triggered && currentHealth <= (maxHealth * 0.5f))
             {
-                Die();
+                isPhase2Triggered = true;
+                if (controller != null) controller.StartPhaseTransition();
             }
-        }
 
-        public void Die()
-        {
-            if (isDead) return;
-            isDead = true;
-
-            Debug.Log($"{gameObject.name}이(가) 사망했습니다.");
-
-            OnDeath?.Invoke();
-
-            Destroy(gameObject, 0.5f);
+            // 2. 사망 체크
+            if (currentHealth <= 0)
+            {
+                isDead = true;
+                currentHealth = 0;
+                if (controller != null) controller.HandleDeath();
+            }
         }
     }
 }

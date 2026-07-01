@@ -4,8 +4,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerAttack : MonoBehaviour
 {
-    private BossManager bossManager;
-
+    [Header("Attack Settings")]
     [SerializeField] private float weaponDamage = 5f;
     [SerializeField] private float attackDistance = 3f;
     [SerializeField] private float weaponDelay = 1f;
@@ -13,6 +12,7 @@ public class PlayerAttack : MonoBehaviour
 
     private float lastWeaponAttackTime;
     private Vector2 aimDirection;
+
     private PlayerInputActions inputActions;
     private SpriteRenderer spriteRenderer;
     private Camera mainCamera;
@@ -21,31 +21,38 @@ public class PlayerAttack : MonoBehaviour
     {
         inputActions = new PlayerInputActions();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        mainCamera = Camera.main;
     }
+
     private void OnEnable()
     {
         inputActions.Player.Enable();
     }
+
     private void OnDisable()
     {
         inputActions.Player.Disable();
     }
+
+    private void Update()
+    {
+        HandleAiming();
+        HandleAttackInput();
+    }
+
     private void HandleAiming()
     {
+        if (mainCamera == null) return;
+
         Vector2 mousePos = inputActions.Player.Aim.ReadValue<Vector2>();
-        mousePos = Camera.main.ScreenToWorldPoint(mousePos);
+        Vector3 worldMousePos = mainCamera.ScreenToWorldPoint(mousePos);
 
-        aimDirection = (mousePos - (Vector2)transform.position).normalized;
+        aimDirection = ((Vector2)worldMousePos - (Vector2)transform.position).normalized;
 
-        if (aimDirection.x > 0)
-        {
-            spriteRenderer.flipX = false;
-        }
-        else if (aimDirection.x < 0)
-        {
-            spriteRenderer.flipX = true;
-        }
+        if (aimDirection.x > 0) spriteRenderer.flipX = false;
+        else if (aimDirection.x < 0) spriteRenderer.flipX = true;
     }
+
     private void HandleAttackInput()
     {
         if (inputActions.Player.Attack.IsPressed())
@@ -62,41 +69,24 @@ public class PlayerAttack : MonoBehaviour
     {
         BossManager bossManager = BossManager.Instance;
 
-        if (bossManager == null || bossManager.activeMonsters.Count == 0)
+        if (bossManager == null || bossManager.TargetBoss == null) return;
+
+        BossHealth boss = bossManager.TargetBoss;
+
+        Vector2 directionToMonster = (boss.transform.position - transform.position);
+        float distanceSqr = directionToMonster.sqrMagnitude;
+        float attackRangeSqr = attackDistance * attackDistance;
+
+        if (distanceSqr > attackRangeSqr) return;
+
+        directionToMonster.Normalize();
+        float dot = Vector2.Dot(aimDirection, directionToMonster);
+        float cosAngle = Mathf.Cos((attackAngle * 0.5f) * Mathf.Deg2Rad);
+
+        if (dot > cosAngle)
         {
-
-            return;
+            boss.TakeDamage(weaponDamage);
+            Debug.Log($"{boss.name}에게 {weaponDamage} 데미지!");
         }
-        for (int i = 0; i < bossManager.activeMonsters.Count; i++)
-        {
-            BossHealth boss = bossManager.activeMonsters[i];
-
-            if (boss == null)
-                continue;
-
-            Vector2 directionToMonster = (boss.transform.position - transform.position);
-            float distanceSqr = directionToMonster.sqrMagnitude;
-            float attackRangeSqr = attackDistance * attackDistance;
-
-            if (distanceSqr > attackRangeSqr)
-            {
-                continue;
-            }
-
-            directionToMonster.Normalize();
-            float dot = Vector2.Dot(aimDirection, directionToMonster.normalized);
-            float cosAngle = Mathf.Cos((attackAngle * 0.5f) * Mathf.Deg2Rad);
-
-            if (dot > cosAngle)
-            {
-                boss.TakeDamage(weaponDamage);
-                Debug.Log($"{boss.name} 에게 {weaponDamage} 데미지");
-            }
-        }
-    }
-    void Update()
-    {
-        HandleAiming();
-        HandleAttackInput();
     }
 }
