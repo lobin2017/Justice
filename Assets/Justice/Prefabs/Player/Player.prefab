@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 8692676266456002648}
   - component: {fileID: 3371467042095843102}
   - component: {fileID: 1475445212573544893}
+  - component: {fileID: -217744990615451552}
   m_Layer: 20
   m_Name: Player
   m_TagString: Player
@@ -33,7 +34,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 4, y: -5, z: 0}
-  m_LocalScale: {x: 3, y: 3, z: 3}
+  m_LocalScale: {x: 3, y: 3, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -50,7 +51,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 684979f29abebd44790871ac857c2b79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
-  moveSpeed: 5
 --- !u!114 &7096070831390396082
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -63,7 +63,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79a9310fda5b5ee468345688a7af63c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAttack
-  monsterManager: {fileID: 0}
   weaponDamage: 5
   attackDistance: 3
   weaponDelay: 1
@@ -130,12 +129,13 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 3
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: eed89140878274444b8f5965c0e1793d, type: 3}
+  m_Sprite: {fileID: 8793639957104055765, guid: ae6b4915f52e27c40bb374b6f68a5970,
+    type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 1
-  m_Size: {x: 0.24, y: 0.24}
+  m_Size: {x: 0.14, y: 0.28}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -227,11 +227,23 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.24, y: 0.24}
-    newSize: {x: 0.24, y: 0.24}
+    oldSize: {x: 0.14, y: 0.28}
+    newSize: {x: 0.14, y: 0.28}
     adaptiveTilingThreshold: 0.5
     drawMode: 1
     adaptiveTiling: 0
   m_AutoTiling: 0
   m_Size: {x: 0.2, y: 0.2}
   m_EdgeRadius: 0
+--- !u!114 &-217744990615451552
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9069316028987014414}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b579e42811dab74ca397ef666d08dca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerAnimationController

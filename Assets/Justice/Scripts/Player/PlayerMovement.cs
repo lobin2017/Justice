@@ -1,24 +1,23 @@
+using Player;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
+[RequireComponent(typeof(Rigidbody2D), typeof(PlayerAnimationController))]
 public class PlayerMovement : MonoBehaviour
 {
-    [Header("Movement Settings")]
     [SerializeField] private float moveSpeed = 5f;
 
-    private PlayerInputActions inputActions;
-    private Animator animator;
     private Rigidbody2D rb;
-    private SpriteRenderer spriteRenderer;
+    private PlayerAnimationController animationController;
+    private PlayerInputActions inputActions;
 
     private Vector2 moveInput;
 
     private void Awake()
     {
-        inputActions = new PlayerInputActions();
-        animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
-        spriteRenderer = GetComponent<SpriteRenderer>();
+        animationController = GetComponent<PlayerAnimationController>();
+
+        inputActions = new PlayerInputActions();
     }
 
     private void OnEnable()
@@ -35,25 +34,16 @@ public class PlayerMovement : MonoBehaviour
     {
         moveInput = inputActions.Player.Move.ReadValue<Vector2>();
 
-        bool isMoving = moveInput.sqrMagnitude > 0.01f;
-        animator.SetBool("isMoving", isMoving);
+        PlayerState state =
+            moveInput.sqrMagnitude > 0.01f
+            ? PlayerState.Walk
+            : PlayerState.Idle;
 
-        if (moveInput.x > 0f) spriteRenderer.flipX = false;
-        else if (moveInput.x < 0f) spriteRenderer.flipX = true;
-
-        if (inputActions.Player.Interact.WasPressedThisFrame())
-        {
-            PerformInteract();
-        }
+        animationController.UpdateAnimation(moveInput, state);
     }
 
     private void FixedUpdate()
     {
         rb.linearVelocity = moveInput * moveSpeed;
-    }
-
-    private void PerformInteract()
-    {
-        Debug.Log("Interact 버튼(E키) 입력됨! 상호작용 대상(NPC, 상자 등) 탐색 가능");
     }
 }

@@ -25,7 +25,7 @@ public class Portal : MonoBehaviour
     {
         if (canEnter && inputActions.Player.Interact.WasPressedThisFrame())
         {
-            SceneManager.LoadScene("Justice_Dungeon");
+            SceneManager.LoadScene("Justice_BossRoom");
         }
     }
 

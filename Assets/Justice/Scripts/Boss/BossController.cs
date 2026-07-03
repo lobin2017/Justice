@@ -7,16 +7,16 @@ namespace Boss
     public class BossController : MonoBehaviour
     {
         [Header("기획 데이터 장착")]
-        public BossData bossData; // 인스펙터에서 원하는 마왕 데이터를 넣어줍니다.
+        public BossData bossData; 
 
         private BossState currentState = BossState.Idle;
         private Transform playerTransform;
 
-        // 컴포넌트 참조
         private BossSight sight;
         private BossAttack attack;
         private BossHealth health;
         private BossAnimation animationCtrl;
+        private BossMovement movement;
 
         private void Awake()
         {
@@ -24,15 +24,18 @@ namespace Boss
             attack = GetComponent<BossAttack>();
             health = GetComponent<BossHealth>();
             animationCtrl = GetComponent<BossAnimation>();
+            movement = GetComponent<BossMovement>();
         }
 
         private void Start()
         {
-            // 장착된 마왕 데이터가 있다면 시스템에 초기 스펙 반영
             if (bossData != null)
             {
                 health.InitializeHealth(bossData.maxHealth);
                 attack.InitializeAttack(bossData.attackRange, bossData.attackCooldown, bossData.damage);
+
+                if (movement != null)
+                    movement.Initialize(bossData.moveSpeed);
             }
         }
 
@@ -40,7 +43,6 @@ namespace Boss
         {
             if (currentState == BossState.Death || currentState == BossState.PhaseTransition) return;
 
-            // 1. 플레이어 감지 여부 체크 (Sight 연동)
             if (playerTransform == null && sight != null)
             {
                 playerTransform = sight.GetDetectedPlayer();
@@ -52,14 +54,9 @@ namespace Boss
             }
             else
             {
-                // 플레이어와의 거리 및 방향 계산
                 float distance = Vector3.Distance(transform.position, playerTransform.position);
                 Vector3 direction = (playerTransform.position - transform.position).normalized;
 
-                // 애니메이션 방향 회전 및 이동 상태 업데이트
-                if (animationCtrl != null) animationCtrl.UpdateAnimation(currentState, direction);
-
-                // 2. 사거리 기반 상태 변경
                 if (distance <= bossData.attackRange)
                 {
                     SetState(BossState.Attack);
@@ -67,12 +64,12 @@ namespace Boss
                 else
                 {
                     SetState(BossState.Chase);
-                    // 이동 속도는 데이터 시트의 속도를 반영
-                    transform.position += direction * bossData.moveSpeed * Time.deltaTime;
+
+                    if (movement != null)
+                        movement.Move(direction);
                 }
             }
 
-            // 3. 상태별 행동 수행
             ExecuteStateBehavior();
         }
 
@@ -90,17 +87,14 @@ namespace Boss
             }
         }
 
-        // Health 스크립트에서 페이즈 전환 트리거 발생 시 호출
         public void StartPhaseTransition()
         {
             SetState(BossState.PhaseTransition);
             if (animationCtrl != null) animationCtrl.PlayPhaseTransition();
 
-            // TODO: 페이즈 연출(약 2초 대기 등)이 끝난 후 다시 Chase 상태로 돌리는 로직 추가 가능
             Debug.Log($"{bossData.bossName}이(가) 2페이즈로 각성합니다!");
         }
 
-        // Health 스크립트에서 사망 시 호출
         public void HandleDeath()
         {
             SetState(BossState.Death);

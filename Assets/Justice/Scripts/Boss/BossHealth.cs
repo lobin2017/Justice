@@ -33,14 +33,12 @@ namespace Boss
             currentHealth -= damage;
             if (animationCtrl != null) animationCtrl.PlayHit();
 
-            // 1. 페이즈 전환 체크 (체력 50% 이하 조건)
             if (!isPhase2Triggered && currentHealth <= (maxHealth * 0.5f))
             {
                 isPhase2Triggered = true;
                 if (controller != null) controller.StartPhaseTransition();
             }
 
-            // 2. 사망 체크
             if (currentHealth <= 0)
             {
                 isDead = true;

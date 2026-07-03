@@ -1,42 +1,45 @@
 using UnityEngine;
 
-public class PlayerHealth : MonoBehaviour, IDamageable
+namespace Player
 {
-    [Header("Health Settings")]
-    [SerializeField] private float maxHp = 200f; 
-
-    public float MaxHp => maxHp;
-    public float CurrentHp { get; private set; }
-
-    private bool isDead;
-
-    private void Awake()
+    public class PlayerHealth : MonoBehaviour, IDamageable
     {
-        CurrentHp = maxHp;
-    }
+        [Header("Health Settings")]
+        [SerializeField] private float maxHp = 200f;
 
-    public void TakeDamage(float damageAmount)
-    {
-        if (isDead) return;
+        public float MaxHp => maxHp;
+        public float CurrentHp { get; private set; }
 
-        CurrentHp -= damageAmount;
-        CurrentHp = Mathf.Clamp(CurrentHp, 0, maxHp);
+        private bool isDead;
 
-        Debug.Log($"{gameObject.name}이(가) {damageAmount}의 피해를 입었습니다. 남은 HP: {CurrentHp}");
-
-        if (CurrentHp <= 0)
+        private void Awake()
         {
-            Die();
+            CurrentHp = maxHp;
         }
-    }
 
-    public void Die()
-    {
-        if (isDead) return;
+        public void TakeDamage(float damageAmount)
+        {
+            if (isDead) return;
 
-        isDead = true;
-        Debug.Log("플레이어 사망");
+            CurrentHp -= damageAmount;
+            CurrentHp = Mathf.Clamp(CurrentHp, 0, maxHp);
 
-        gameObject.SetActive(false);
+            Debug.Log($"{gameObject.name}이(가) {damageAmount}의 피해를 입었습니다. 남은 HP: {CurrentHp}");
+
+            if (CurrentHp <= 0)
+            {
+                Die();
+            }
+        }
+
+        public void Die()
+        {
+            if (isDead) return;
+
+            isDead = true;
+            Debug.Log("플레이어 사망");
+
+            gameObject.SetActive(false);
+        }
     }
 }
