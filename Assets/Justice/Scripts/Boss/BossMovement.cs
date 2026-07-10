@@ -2,14 +2,15 @@ using UnityEngine;
 
 namespace Boss
 {
+    [RequireComponent(typeof(Rigidbody2D))]
     public class BossMovement : MonoBehaviour
     {
+        private Rigidbody2D rb;
         private float moveSpeed;
-        private Transform self;
 
         private void Awake()
         {
-            self = transform;
+            rb = GetComponent<Rigidbody2D>();
         }
 
         public void Initialize(float speed)
@@ -17,11 +18,14 @@ namespace Boss
             moveSpeed = speed;
         }
 
-        public void Move(Vector3 direction)
+        public void Move(Vector2 direction)
         {
-            if (direction == Vector3.zero) return;
+            rb.linearVelocity = direction.normalized * moveSpeed;
+        }
 
-            self.position += direction.normalized * moveSpeed * Time.deltaTime;
+        public void Stop()
+        {
+            rb.linearVelocity = Vector2.zero;
         }
     }
 }

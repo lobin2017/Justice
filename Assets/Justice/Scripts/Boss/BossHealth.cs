@@ -2,49 +2,69 @@ using UnityEngine;
 
 namespace Boss
 {
-    public class BossHealth : MonoBehaviour
+    [RequireComponent(typeof(BossController))]
+    [RequireComponent(typeof(BossAnimation))]
+    public class BossHealth : MonoBehaviour, IDamageable
     {
-        private float maxHealth;
-        private float currentHealth;
-        private bool isDead = false;
-        private bool isPhase2Triggered = false;
+        private float maxHp;
+        private float currentHp;
+
+        private bool isDead;
+        private bool phase2Triggered;
 
         private BossController controller;
-        private BossAnimation animationCtrl;
+        private BossAnimation animationController;
+
+        public float MaxHp => maxHp;
+        public float CurrentHp => currentHp;
 
         private void Awake()
         {
             controller = GetComponent<BossController>();
-            animationCtrl = GetComponent<BossAnimation>();
+            animationController = GetComponent<BossAnimation>();
         }
 
-        public void InitializeHealth(float maxHp)
+        public void Initialize(float hp)
         {
-            maxHealth = maxHp;
-            currentHealth = maxHealth;
+            maxHp = hp;
+            currentHp = hp;
+
             isDead = false;
-            isPhase2Triggered = false;
+            phase2Triggered = false;
         }
 
         public void TakeDamage(float damage)
         {
-            if (isDead) return;
+            if (isDead)
+                return;
 
-            currentHealth -= damage;
-            if (animationCtrl != null) animationCtrl.PlayHit();
+            currentHp -= damage;
+            currentHp = Mathf.Clamp(currentHp, 0f, maxHp);
 
-            if (!isPhase2Triggered && currentHealth <= (maxHealth * 0.5f))
+            animationController.PlayHit();
+
+            if (!phase2Triggered &&
+                currentHp <= maxHp * controller.BossData.phase2Threshold)
             {
-                isPhase2Triggered = true;
-                if (controller != null) controller.StartPhaseTransition();
+                phase2Triggered = true;
+                controller.StartPhaseTransition();
             }
 
-            if (currentHealth <= 0)
+            if (currentHp <= 0f)
             {
-                isDead = true;
-                currentHealth = 0;
-                if (controller != null) controller.HandleDeath();
+                Die();
             }
+        }
+
+        public void Die()
+        {
+            if (isDead)
+                return;
+
+            isDead = true;
+
+            animationController.PlayDeath();
+            controller.HandleDeath();
         }
     }
 }

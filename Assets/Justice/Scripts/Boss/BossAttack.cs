@@ -2,75 +2,90 @@ using UnityEngine;
 
 namespace Boss
 {
+    [RequireComponent(typeof(BossController))]
+    [RequireComponent(typeof(BossAnimation))]
     public class BossAttack : MonoBehaviour
     {
-        private float range;
-        private float cooldown;
+        private float attackRange;
+        private float attackCooldown;
         private float damage;
+
         private float lastAttackTime;
 
         private BossController controller;
-        private BossAnimation animationCtrl;
+        private BossAnimation animationController;
+
+        public float AttackRange => attackRange;
 
         private void Awake()
         {
             controller = GetComponent<BossController>();
-            animationCtrl = GetComponent<BossAnimation>();
+            animationController = GetComponent<BossAnimation>();
         }
 
-        public void InitializeAttack(float attackRange, float attackCooldown, float attackDamage)
+        public void Initialize(float range, float cooldown, float attackDamage)
         {
-            range = attackRange;
-            cooldown = attackCooldown;
+            attackRange = range;
+            attackCooldown = cooldown;
             damage = attackDamage;
         }
 
         public void TryAttack(Transform target)
         {
-            if (Time.time >= lastAttackTime + cooldown)
-            {
-                lastAttackTime = Time.time;
+            if (target == null)
+                return;
 
-                if (animationCtrl != null) animationCtrl.PlayAttackTrigger();
+            if (Time.time < lastAttackTime + attackCooldown)
+                return;
 
-                if (controller != null)
-                {
-                    ExecutePatternByBossType(controller.GetBossType(), target);
-                }
-            }
+            lastAttackTime = Time.time;
+
+            animationController.PlayAttack();
+
+            ExecutePattern(controller.BossType, target);
         }
 
-        private void ExecutePatternByBossType(BossType type, Transform target)
+        private void ExecutePattern(BossType bossType, Transform target)
         {
-            switch (type)
+            switch (bossType)
             {
                 case BossType.Nexar:
-                    //Debug.Log("넥사르: 플레이어를 향해 돌진 공격!");
+                    // TODO : 저주
                     break;
 
                 case BossType.Audax:
-                    //Debug.Log("아우닥스: 유도 불꽃 투사체 발사!");
+                    // TODO : 만용
                     break;
 
                 case BossType.Furion:
-                    //Debug.Log("퓨리온: 주변 광역 포효 지진 공격!");
+                    // TODO : 광기
                     break;
 
                 case BossType.Spelis:
-                    //Debug.Log("스펠리스: 마법 진을 소환하여 번개 소환!");
+                    // TODO : 절망
                     break;
 
                 case BossType.Credis:
-                    //Debug.Log("크레디스: 전방 칼날 부메랑 투척!");
+                    // TODO : 회의
                     break;
 
                 case BossType.Votar:
-                    //Debug.Log("보타르: 플레이어의 뒤로 순간이동 후 기습!");
+                    // TODO : 집착
                     break;
 
                 case BossType.Delios:
-                    //Debug.Log("델리오스: 체력을 흡수하는 암흑 구체 발사!");
+                    // TODO : 환각
                     break;
+            }
+
+            if (Vector2.Distance(transform.position, target.position) <= attackRange)
+            {
+                IDamageable damageable = target.GetComponent<IDamageable>();
+
+                if (damageable != null)
+                {
+                    damageable.TakeDamage(damage);
+                }
             }
         }
     }

@@ -1,52 +1,56 @@
-using Boss;
 using UnityEngine;
 
-public class BossAnimation : MonoBehaviour
+namespace Boss
 {
-    private Animator animator;
-
-    private readonly int isMovingHash = Animator.StringToHash("isMoving");
-    private readonly int attackHash = Animator.StringToHash("attack");
-    private readonly int hitHash = Animator.StringToHash("hit");               
-    private readonly int deathHash = Animator.StringToHash("death");           
-    private readonly int phaseTransitionHash = Animator.StringToHash("phaseTransition"); 
-
-    private void Awake()
+    public enum BossState
     {
-        animator = GetComponent<Animator>();
+        Idle,
+        Chase,
+        Attack,
+        PhaseTransition,
+        Death
     }
-
-    public void UpdateAnimation(BossState currentState, Vector3 directionToPlayer)
+    [RequireComponent(typeof(Animator))]
+    public class BossAnimation : MonoBehaviour
     {
-        if (animator == null) return;
+        private Animator animator;
 
-        bool isMoving = (currentState == BossState.Chase);
-        animator.SetBool(isMovingHash, isMoving);
+        private static readonly int IsMovingHash = Animator.StringToHash("isMoving");
+        private static readonly int AttackHash = Animator.StringToHash("attack");
+        private static readonly int HitHash = Animator.StringToHash("hit");
+        private static readonly int DeathHash = Animator.StringToHash("death");
+        private static readonly int PhaseHash = Animator.StringToHash("phaseTransition");
 
-        if (directionToPlayer.x > 0)
+        private void Awake()
         {
-            transform.localScale = new Vector3(-1, 1, 1);
+            animator = GetComponent<Animator>();
         }
-        else if (directionToPlayer.x < 0)
+
+        public void UpdateAnimation(BossState state, Vector2 direction)
         {
-            transform.localScale = new Vector3(1, 1, 1);
+            if (animator == null) return;
+
+            animator.SetBool(IsMovingHash, state == BossState.Chase);
         }
-    }
 
-    public void PlayAttackTrigger() => animator?.SetTrigger(attackHash);
+        public void PlayAttack()
+        {
+            animator.SetTrigger(AttackHash);
+        }
 
-    public void PlayHit()
-    {
-        animator?.SetTrigger(hitHash);
-    }
+        public void PlayHit()
+        {
+            animator.SetTrigger(HitHash);
+        }
 
-    public void PlayDeath()
-    {
-        animator?.SetTrigger(deathHash);
-    }
+        public void PlayDeath()
+        {
+            animator.SetTrigger(DeathHash);
+        }
 
-    public void PlayPhaseTransition()
-    {
-        animator?.SetTrigger(phaseTransitionHash);
+        public void PlayPhaseTransition()
+        {
+            animator.SetTrigger(PhaseHash);
+        }
     }
 }

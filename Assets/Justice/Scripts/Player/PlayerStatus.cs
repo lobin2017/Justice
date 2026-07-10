@@ -2,72 +2,81 @@ using UnityEngine;
 
 namespace Lobby
 {
-    // Justice님이 직접 구상하신 4대 가문의 중의적 수식어 키워드
     public enum HouseType
     {
         None,
-        Blindness,  // 맹목 
-        Obedience,  // 순명 
-        Order,      // 규율 
-        Loyalty     // 충의 
+        Blindness,   // 맹목
+        Obedience,   // 순명
+        Order,       // 규율
+        Loyalty      // 충의
     }
 
     public class PlayerStatus : MonoBehaviour
     {
         public static PlayerStatus Instance { get; private set; }
 
-        [Header("--- 가주 격파 후 각인된 가문의 힘 ---")]
-        public HouseType currentHouse = HouseType.None;
+        [Header("현재 계승한 가문의 힘")]
+        [SerializeField] private HouseType currentHouse = HouseType.None;
+        public HouseType CurrentHouse => currentHouse;
 
-        [Header("--- [맹목] 버프 데이터 ---")]
+        [Header("맹목")]
+        [SerializeField] private float blindnessCooldown = 60f;
         private float lastBlindnessTime = -100f;
-        public float blindnessCooldown = 60f; 
 
-        [Header("--- [충의] 버프 데이터 ---")]
+        [Header("충의")]
+        [SerializeField] private float loyaltyCooldown = 4f;
+        [SerializeField] private float staminaReturnAmount = 15f;
         private float lastLoyaltyTime = -100f;
-        public float loyaltyCooldown = 4f;
-        public float staminaReturnAmount = 15f;
 
         private void Awake()
         {
-            if (Instance == null)
+            if (Instance != null && Instance != this)
             {
-                Instance = this;
-                DontDestroyOnLoad(gameObject);
+                Destroy(gameObject);
+                return;
             }
-            else Destroy(gameObject);
+
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
         }
 
         public void InscribeHouseSign(HouseType newHouse)
         {
             currentHouse = newHouse;
-            Debug.Log($"<color=green>[정의의 재해석]</color> {currentHouse} 가문의 힘을 용사의 신념으로 흡수했습니다.");
+
+            Debug.Log(
+                $"<color=green>[정의의 재해석]</color> {currentHouse} 가문의 힘을 계승했습니다.");
         }
 
-        public float CalculateMitigatedDamage(float incomingDamage)
+        public float CalculateMitigatedDamage(float damage)
         {
-            if (currentHouse != HouseType.Blindness) return incomingDamage;
+            if (currentHouse != HouseType.Blindness)
+                return damage;
 
-            if (Time.time >= lastBlindnessTime + blindnessCooldown)
-            {
-                float reducedDamage = incomingDamage * 0.7f; 
-                lastBlindnessTime = Time.time;
-                Debug.Log($"<color=cyan>[맹목의 수호 발동]</color> 대미지 30% 경감 ({incomingDamage} -> {reducedDamage})");
-                return reducedDamage;
-            }
-            return incomingDamage;
+            if (Time.time < lastBlindnessTime + blindnessCooldown)
+                return damage;
+
+            lastBlindnessTime = Time.time;
+
+            float reducedDamage = damage * 0.7f;
+
+            Debug.Log(
+                $"<color=cyan>[맹목]</color> 피해 감소 ({damage} → {reducedDamage})");
+
+            return reducedDamage;
         }
 
         public float GetStaminaReturn()
         {
-            if (currentHouse != HouseType.Loyalty) return 0f;
+            if (currentHouse != HouseType.Loyalty)
+                return 0f;
 
-            if (Time.time >= lastLoyaltyTime + loyaltyCooldown)
-            {
-                lastLoyaltyTime = Time.time;
-                return staminaReturnAmount;
-            }
-            return 0f;
+            if (Time.time < lastLoyaltyTime + loyaltyCooldown)
+                return 0f;
+
+            lastLoyaltyTime = Time.time;
+
+            return staminaReturnAmount;
         }
     }
 }

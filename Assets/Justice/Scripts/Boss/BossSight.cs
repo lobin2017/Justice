@@ -4,29 +4,17 @@ namespace Boss
 {
     public class BossSight : MonoBehaviour
     {
-        [Header("시야 범위 설정")]
-        public float viewRadius = 7f;         
-        public LayerMask playerLayer;         
+        [SerializeField] private float viewRadius = 7f;
+        [SerializeField] private LayerMask playerLayer;
 
-        private Transform detectedPlayer;
+        public Transform DetectedPlayer { get; private set; }
 
         private void Update()
         {
-            Collider2D targetCollider = Physics2D.OverlapCircle(transform.position, viewRadius, playerLayer);
+            Collider2D target =
+                Physics2D.OverlapCircle(transform.position, viewRadius, playerLayer);
 
-            if (targetCollider != null)
-            {
-                detectedPlayer = targetCollider.transform;
-            }
-            else
-            {
-                detectedPlayer = null;
-            }
-        }
-
-        public Transform GetDetectedPlayer()
-        {
-            return detectedPlayer;
+            DetectedPlayer = target != null ? target.transform : null;
         }
 
         private void OnDrawGizmosSelected()

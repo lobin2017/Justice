@@ -27,7 +27,7 @@ namespace BossBattle
         [Header("--- 스폰 및 대기 위치 (선택 사항) ---")]
         public Transform battleZoneCenter; 
         public Transform waitZoneLeft;     
-        public Transform waitZoneRight;    
+        public Transform waitZoneRight;
 
         private void Awake()
         {
@@ -91,7 +91,7 @@ namespace BossBattle
                 }
             }
 
-            Debug.Log($"[1페이즈 시작] 선발대: {activeBosses[0].profile.leaderName}, {activeBosses[1].profile.leaderName} / 대기조: {waitingBosses[0].profile.leaderName}, {waitingBosses[1].profile.leaderName}");
+            Debug.Log($"[1페이즈 시작] 선발대: {activeBosses[0].Profile.leaderName}, {activeBosses[1].Profile.leaderName} / 대기조: {waitingBosses[0].Profile.leaderName}, {waitingBosses[1].Profile.leaderName}");
         }
 
         private void ExecuteTagExchange()
@@ -127,7 +127,7 @@ namespace BossBattle
             if (waitingBosses.Contains(deadBoss)) waitingBosses.Remove(deadBoss);
             if (allBosses.Contains(deadBoss)) allBosses.Remove(deadBoss);
 
-            Debug.Log($"<b>[{deadBoss.profile.houseName}] {deadBoss.profile.leaderName}</b>이(가) 쓰러졌습니다. (현재 처치: {deadBossCount}/4)");
+            Debug.Log($"<b>[{deadBoss.Profile.houseName}] {deadBoss.Profile.leaderName}</b>이(가) 쓰러졌습니다. (현재 처치: {deadBossCount}/4)");
 
             if (deadBossCount == 2 && currentPhase == BattlePhase.Phase_1)
             {

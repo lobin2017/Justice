@@ -1,9 +1,11 @@
 using Player;
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody2D), typeof(PlayerAnimationController))]
+[RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(PlayerAnimationController))]
 public class PlayerMovement : MonoBehaviour
 {
+    [Header("Movement")]
     [SerializeField] private float moveSpeed = 5f;
 
     private Rigidbody2D rb;
@@ -18,6 +20,12 @@ public class PlayerMovement : MonoBehaviour
         animationController = GetComponent<PlayerAnimationController>();
 
         inputActions = new PlayerInputActions();
+
+        if (rb == null)
+            Debug.LogError($"{name} : Rigidbody2D가 없습니다.");
+
+        if (animationController == null)
+            Debug.LogError($"{name} : PlayerAnimationController가 없습니다.");
     }
 
     private void OnEnable()
@@ -32,7 +40,24 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
+        ReadInput();
+        UpdateAnimation();
+    }
+
+    private void FixedUpdate()
+    {
+        Move();
+    }
+
+    private void ReadInput()
+    {
         moveInput = inputActions.Player.Move.ReadValue<Vector2>();
+    }
+
+    private void UpdateAnimation()
+    {
+        if (animationController == null)
+            return;
 
         PlayerState state =
             moveInput.sqrMagnitude > 0.01f
@@ -42,8 +67,11 @@ public class PlayerMovement : MonoBehaviour
         animationController.UpdateAnimation(moveInput, state);
     }
 
-    private void FixedUpdate()
+    private void Move()
     {
+        if (rb == null)
+            return;
+
         rb.linearVelocity = moveInput * moveSpeed;
     }
 }

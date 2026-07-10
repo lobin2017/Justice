@@ -12,16 +12,20 @@ namespace Player
         [SerializeField] private float weaponDelay = 1f;
         [SerializeField] private float attackAngle = 70f;
 
-        private float lastWeaponAttackTime;
+        private float lastAttackTime;
+
         private Vector2 aimDirection;
 
         private PlayerInputActions inputActions;
         private Camera mainCamera;
+        private BossManager bossManager;
 
         private void Awake()
         {
             inputActions = new PlayerInputActions();
+
             mainCamera = Camera.main;
+            bossManager = BossManager.Instance;
         }
 
         private void OnEnable()
@@ -36,55 +40,71 @@ namespace Player
 
         private void Update()
         {
-            HandleAiming();
-            HandleAttackInput();
-        }
+            UpdateAimDirection();
 
-        private void HandleAiming()
-        {
-            if (mainCamera == null) return;
-
-            Vector2 mousePos = inputActions.Player.Aim.ReadValue<Vector2>();
-            Vector3 worldMousePos = mainCamera.ScreenToWorldPoint(mousePos);
-
-            aimDirection = ((Vector2)worldMousePos - (Vector2)transform.position).normalized;
-        }
-
-        private void HandleAttackInput()
-        {
             if (inputActions.Player.Attack.IsPressed())
             {
-                if (Time.time - lastWeaponAttackTime >= weaponDelay)
-                {
-                    PerformAttack();
-                    lastWeaponAttackTime = Time.time;
-                }
+                TryAttack();
             }
         }
 
-        public void PerformAttack()
+        private void UpdateAimDirection()
         {
-            BossManager bossManager = BossManager.Instance;
+            if (mainCamera == null)
+                return;
 
-            if (bossManager == null || bossManager.TargetBoss == null) return;
+            Vector2 mousePosition =
+                inputActions.Player.Aim.ReadValue<Vector2>();
+
+            Vector2 worldPosition =
+                mainCamera.ScreenToWorldPoint(mousePosition);
+
+            aimDirection =
+                (worldPosition - (Vector2)transform.position).normalized;
+        }
+
+        private void TryAttack()
+        {
+            if (Time.time < lastAttackTime + weaponDelay)
+                return;
+
+            lastAttackTime = Time.time;
+
+            PerformAttack();
+        }
+
+        private void PerformAttack()
+        {
+            if (bossManager == null)
+                return;
 
             BossHealth boss = bossManager.TargetBoss;
 
-            Vector2 directionToMonster = (boss.transform.position - transform.position);
-            float distanceSqr = directionToMonster.sqrMagnitude;
-            float attackRangeSqr = attackDistance * attackDistance;
+            if (boss == null)
+                return;
 
-            if (distanceSqr > attackRangeSqr) return;
+            Vector2 toBoss =
+                (boss.transform.position - transform.position);
 
-            directionToMonster.Normalize();
-            float dot = Vector2.Dot(aimDirection, directionToMonster);
-            float cosAngle = Mathf.Cos((attackAngle * 0.5f) * Mathf.Deg2Rad);
+            float distance = toBoss.sqrMagnitude;
 
-            if (dot > cosAngle)
-            {
-                boss.TakeDamage(weaponDamage);
-                Debug.Log($"{boss.name}에게 {weaponDamage} 데미지!");
-            }
+            if (distance > attackDistance * attackDistance)
+                return;
+
+            toBoss.Normalize();
+
+            float dot =
+                Vector2.Dot(aimDirection, toBoss);
+
+            float cos =
+                Mathf.Cos((attackAngle * 0.5f) * Mathf.Deg2Rad);
+
+            if (dot < cos)
+                return;
+
+            boss.TakeDamage(weaponDamage);
+
+            Debug.Log($"{boss.name}에게 {weaponDamage} 데미지");
         }
     }
 }

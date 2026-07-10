@@ -2,106 +2,150 @@ using UnityEngine;
 
 namespace Boss
 {
-    public enum BossState { Idle, Chase, Attack, PhaseTransition, Death }
-
+    [RequireComponent(typeof(BossSight))]
+    [RequireComponent(typeof(BossMovement))]
+    [RequireComponent(typeof(BossAttack))]
+    [RequireComponent(typeof(BossHealth))]
+    [RequireComponent(typeof(BossAnimation))]
     public class BossController : MonoBehaviour
     {
-        [Header("기획 데이터 장착")]
-        public BossData bossData; 
+        [Header("Boss Data")]
+        [SerializeField] private BossData bossData;
 
         private BossState currentState = BossState.Idle;
-        private Transform playerTransform;
+
+        private Transform player;
 
         private BossSight sight;
+        private BossMovement movement;
         private BossAttack attack;
         private BossHealth health;
-        private BossAnimation animationCtrl;
-        private BossMovement movement;
+        private BossAnimation animationController;
+
+        public BossType BossType => bossData.bossType;
+        public BossData BossData => bossData;
 
         private void Awake()
         {
             sight = GetComponent<BossSight>();
+            movement = GetComponent<BossMovement>();
             attack = GetComponent<BossAttack>();
             health = GetComponent<BossHealth>();
-            animationCtrl = GetComponent<BossAnimation>();
-            movement = GetComponent<BossMovement>();
+            animationController = GetComponent<BossAnimation>();
         }
 
         private void Start()
         {
-            if (bossData != null)
+            if (bossData == null)
             {
-                health.InitializeHealth(bossData.maxHealth);
-                attack.InitializeAttack(bossData.attackRange, bossData.attackCooldown, bossData.damage);
-
-                if (movement != null)
-                    movement.Initialize(bossData.moveSpeed);
+                Debug.LogError($"{name} : BossData가 지정되지 않았습니다.");
+                enabled = false;
+                return;
             }
+
+            movement.Initialize(bossData.moveSpeed);
+
+            attack.Initialize(
+                bossData.attackRange,
+                bossData.attackCooldown,
+                bossData.damage);
+
+            health.Initialize(bossData.maxHealth);
         }
 
         private void Update()
         {
-            if (currentState == BossState.Death || currentState == BossState.PhaseTransition) return;
+            if (currentState == BossState.Death ||
+                currentState == BossState.PhaseTransition)
+                return;
 
-            if (playerTransform == null && sight != null)
-            {
-                playerTransform = sight.GetDetectedPlayer();
-            }
+            player = sight.DetectedPlayer;
 
-            if (playerTransform == null)
+            if (player == null)
             {
-                SetState(BossState.Idle);
+                ChangeState(BossState.Idle);
             }
             else
             {
-                float distance = Vector3.Distance(transform.position, playerTransform.position);
-                Vector3 direction = (playerTransform.position - transform.position).normalized;
+                float distance =
+                    Vector2.Distance(transform.position, player.position);
 
-                if (distance <= bossData.attackRange)
+                if (distance <= attack.AttackRange)
                 {
-                    SetState(BossState.Attack);
+                    ChangeState(BossState.Attack);
                 }
                 else
                 {
-                    SetState(BossState.Chase);
-
-                    if (movement != null)
-                        movement.Move(direction);
+                    ChangeState(BossState.Chase);
                 }
             }
 
-            ExecuteStateBehavior();
-        }
+            ExecuteState();
 
-        private void SetState(BossState newState)
-        {
-            if (currentState == newState) return;
-            currentState = newState;
-        }
+            Vector2 direction = Vector2.zero;
 
-        private void ExecuteStateBehavior()
-        {
-            if (currentState == BossState.Attack && attack != null && playerTransform != null)
+            if (player != null)
             {
-                attack.TryAttack(playerTransform);
+                direction =
+                    (player.position - transform.position).normalized;
             }
+
+            animationController.UpdateAnimation(currentState, direction);
+        }
+
+        private void ExecuteState()
+        {
+            switch (currentState)
+            {
+                case BossState.Idle:
+
+                    movement.Stop();
+
+                    break;
+
+                case BossState.Chase:
+
+                    Vector2 direction =
+                        (player.position - transform.position).normalized;
+
+                    movement.Move(direction);
+
+                    break;
+
+                case BossState.Attack:
+
+                    movement.Stop();
+                    attack.TryAttack(player);
+
+                    break;
+            }
+        }
+
+        private void ChangeState(BossState newState)
+        {
+            if (currentState == newState)
+                return;
+
+            currentState = newState;
         }
 
         public void StartPhaseTransition()
         {
-            SetState(BossState.PhaseTransition);
-            if (animationCtrl != null) animationCtrl.PlayPhaseTransition();
+            ChangeState(BossState.PhaseTransition);
 
-            Debug.Log($"{bossData.bossName}이(가) 2페이즈로 각성합니다!");
+            movement.Stop();
+            animationController.PlayPhaseTransition();
+
+            Debug.Log($"{bossData.bossName} 2페이즈 시작");
         }
 
         public void HandleDeath()
         {
-            SetState(BossState.Death);
-            if (animationCtrl != null) animationCtrl.PlayDeath();
-            Debug.Log($"{bossData.bossName}이(가) 처단되었습니다.");
-        }
+            ChangeState(BossState.Death);
 
-        public BossType GetBossType() => bossData != null ? bossData.bossType : BossType.Nexar;
+            movement.Stop();
+
+            Debug.Log($"{bossData.bossName} 처치");
+        }
     }
 }

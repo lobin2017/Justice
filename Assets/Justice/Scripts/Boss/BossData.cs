@@ -4,27 +4,40 @@ namespace Boss
 {
     public enum BossType
     {
-        Nexar,   // 저주와 사명의 마왕
-        Audax,   // 만용과 용기의 마왕
-        Furion,  // 광기와 투지의 마왕
-        Spelis,  // 절망과 희망의 마왕
-        Credis,  // 회의와 신념의 마왕
-        Votar,   // 집착과 염원의 마왕
-        Delios   // 환각과 환희의 마왕
+        Nexar,     // 저주와 사명의 마왕
+        Audax,     // 만용과 용기의 마왕
+        Furion,    // 광기와 투지의 마왕
+        Spelis,    // 절망과 희망의 마왕
+        Credis,    // 회의와 신념의 마왕
+        Votar,     // 집착과 염원의 마왕
+        Delios     // 환각과 환희의 마왕
     }
 
-    [CreateAssetMenu(fileName = "NewBossData", menuName = "Boss/Boss Data")]
+    [CreateAssetMenu(fileName = "BossData", menuName = "Boss/Boss Data")]
     public class BossData : ScriptableObject
     {
-        [Header("보스 기본 정보")]
+        [Header("기본 정보")]
         public BossType bossType;
-        public string bossName = "마왕 이름";
+        public string bossName;
 
-        [Header("보스 능력치 설정")]
+        [Header("능력치")]
+        [Min(1)]
         public float maxHealth = 100f;
+
+        [Min(0.1f)]
         public float moveSpeed = 3f;
+
+        [Min(0.1f)]
         public float attackRange = 2f;
+
+        [Min(0.1f)]
         public float attackCooldown = 2f;
+
+        [Min(1)]
         public float damage = 10f;
+
+        [Header("페이즈")]
+        [Range(0f, 1f)]
+        public float phase2Threshold = 0.5f;
     }
 }
