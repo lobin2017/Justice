@@ -25,6 +25,8 @@ namespace Boss
         public BossType BossType => bossData.bossType;
         public BossData BossData => bossData;
 
+        private bool phase2 = false;
+
         private void Awake()
         {
             sight = GetComponent<BossSight>();
@@ -60,7 +62,6 @@ namespace Boss
                 return;
 
             player = sight.DetectedPlayer;
-
             if (player == null)
             {
                 ChangeState(BossState.Idle);
@@ -131,21 +132,38 @@ namespace Boss
 
         public void StartPhaseTransition()
         {
+            if (phase2)
+                return;
+
+            phase2 = true;
+
             ChangeState(BossState.PhaseTransition);
 
-            movement.Stop();
             animationController.PlayPhaseTransition();
 
-            Debug.Log($"{bossData.bossName} 2페이즈 시작");
+            bossData.moveSpeed *= 1.3f;
+            bossData.damage *= 1.5f;
+
+            movement.Initialize(bossData.moveSpeed);
+
+            Invoke(nameof(EndPhaseTransition), 1.5f);
+        }
+        private void EndPhaseTransition()
+        {
+            ChangeState(BossState.Chase);
         }
 
         public void HandleDeath()
         {
             ChangeState(BossState.Death);
 
-            movement.Stop();
+            BossManager.Instance?.ClearBoss();
 
-            Debug.Log($"{bossData.bossName} 처치");
+            animationController.PlayDeath();
+
+            BossManager.Instance?.OnBossKilled(this);
+
+            Destroy(gameObject, 1.5f);
         }
     }
 }

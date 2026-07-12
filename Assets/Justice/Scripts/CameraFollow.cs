@@ -2,22 +2,44 @@ using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
 {
-    [Header("Target Tracking")]
-    [SerializeField] private Transform target;
-    [SerializeField] private float lerpSpeed = 8f;
+    [Header("Camera")]
+    [SerializeField] private float followSpeed = 8f;
 
-    private Vector3 targetPos;
+    private Transform target;
+
+    private void Start()
+    {
+        FindPlayer();
+    }
 
     private void LateUpdate()
     {
-        if (target == null) return;
+        if (target == null)
+        {
+            FindPlayer();
+            return;
+        }
 
-        targetPos = new Vector3(target.position.x, target.position.y, transform.position.z);
+        Vector3 desiredPosition = new Vector3(
+            target.position.x,
+            target.position.y,
+            transform.position.z
+        );
 
         transform.position = Vector3.Lerp(
             transform.position,
-            targetPos,
-            1f - Mathf.Exp(-lerpSpeed * Time.deltaTime)
+            desiredPosition,
+            1f - Mathf.Exp(-followSpeed * Time.deltaTime)
         );
+    }
+
+    private void FindPlayer()
+    {
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+
+        if (player != null)
+        {
+            target = player.transform;
+        }
     }
 }

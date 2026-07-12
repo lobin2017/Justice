@@ -1,48 +1,44 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 public class Portal : MonoBehaviour
 {
+    [SerializeField] private string sceneName = "Justice_BossRoom";
+
     private bool canEnter;
 
-    private PlayerInputActions inputActions;
-
-    private void Awake()
-    {
-        inputActions = new PlayerInputActions();
-    }
-
-    private void OnEnable()
-    {
-        inputActions.Player.Enable();
-    }
-
-    private void OnDisable()
-    {
-        inputActions.Player.Disable();
-    }
     private void Update()
     {
-        if (canEnter && inputActions.Player.Interact.WasPressedThisFrame())
+        if (!canEnter)
+            return;
+
+        if (Keyboard.current != null &&
+            Keyboard.current.eKey.wasPressedThisFrame)
         {
-            SceneManager.LoadScene("Justice_BossRoom");
+            EnterDungeon();
         }
+    }
+
+    private void EnterDungeon()
+    {
+        SceneManager.LoadScene(sceneName);
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
-        {
-            canEnter = true;
-            Debug.Log("E를 눌러 던전 입장");
-        }
+        if (!other.CompareTag("Player"))
+            return;
+
+        canEnter = true;
+        Debug.Log("E를 눌러 던전 입장");
     }
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
-        {
-            canEnter = false;
-        }
+        if (!other.CompareTag("Player"))
+            return;
+
+        canEnter = false;
     }
 }

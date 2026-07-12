@@ -7,25 +7,22 @@ namespace Player
     public class PlayerAttack : MonoBehaviour
     {
         [Header("Attack Settings")]
-        [SerializeField] private float weaponDamage = 5f;
+        [SerializeField] private float weaponDamage = 10f;
         [SerializeField] private float attackDistance = 3f;
-        [SerializeField] private float weaponDelay = 1f;
+        [SerializeField] private float attackDelay = 0.5f;
         [SerializeField] private float attackAngle = 70f;
 
         private float lastAttackTime;
 
-        private Vector2 aimDirection;
-
-        private PlayerInputActions inputActions;
         private Camera mainCamera;
-        private BossManager bossManager;
+        private PlayerInputActions inputActions;
+
+        private Vector2 aimDirection;
 
         private void Awake()
         {
             inputActions = new PlayerInputActions();
-
             mainCamera = Camera.main;
-            bossManager = BossManager.Instance;
         }
 
         private void OnEnable()
@@ -42,9 +39,13 @@ namespace Player
         {
             UpdateAimDirection();
 
-            if (inputActions.Player.Attack.IsPressed())
+            if (inputActions.Player.Attack.WasPressedThisFrame())
             {
-                TryAttack();
+                if (Time.time >= lastAttackTime + attackDelay)
+                {
+                    lastAttackTime = Time.time;
+                    PerformAttack();
+                }
             }
         }
 
@@ -53,32 +54,21 @@ namespace Player
             if (mainCamera == null)
                 return;
 
-            Vector2 mousePosition =
-                inputActions.Player.Aim.ReadValue<Vector2>();
+            Vector2 mousePos = inputActions.Player.Aim.ReadValue<Vector2>();
 
-            Vector2 worldPosition =
-                mainCamera.ScreenToWorldPoint(mousePosition);
+            Vector2 worldPos =
+                mainCamera.ScreenToWorldPoint(mousePos);
 
             aimDirection =
-                (worldPosition - (Vector2)transform.position).normalized;
-        }
-
-        private void TryAttack()
-        {
-            if (Time.time < lastAttackTime + weaponDelay)
-                return;
-
-            lastAttackTime = Time.time;
-
-            PerformAttack();
+                (worldPos - (Vector2)transform.position).normalized;
         }
 
         private void PerformAttack()
         {
-            if (bossManager == null)
+            if (BossManager.Instance == null)
                 return;
 
-            BossHealth boss = bossManager.TargetBoss;
+            BossHealth boss = BossManager.Instance.TargetBoss;
 
             if (boss == null)
                 return;
@@ -86,9 +76,8 @@ namespace Player
             Vector2 toBoss =
                 (boss.transform.position - transform.position);
 
-            float distance = toBoss.sqrMagnitude;
-
-            if (distance > attackDistance * attackDistance)
+            if (toBoss.sqrMagnitude >
+                attackDistance * attackDistance)
                 return;
 
             toBoss.Normalize();
@@ -96,15 +85,15 @@ namespace Player
             float dot =
                 Vector2.Dot(aimDirection, toBoss);
 
-            float cos =
+            float limit =
                 Mathf.Cos((attackAngle * 0.5f) * Mathf.Deg2Rad);
 
-            if (dot < cos)
+            if (dot < limit)
                 return;
 
             boss.TakeDamage(weaponDamage);
 
-            Debug.Log($"{boss.name}에게 {weaponDamage} 데미지");
+            Debug.Log($"{boss.name}에게 {weaponDamage} 피해");
         }
     }
 }

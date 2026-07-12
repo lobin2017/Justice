@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 3371467042095843102}
   - component: {fileID: 1475445212573544893}
   - component: {fileID: -217744990615451552}
-  m_Layer: 20
+  m_Layer: 3
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -51,6 +51,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 684979f29abebd44790871ac857c2b79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
+  moveSpeed: 5
 --- !u!114 &7096070831390396082
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -2,12 +2,10 @@ using UnityEngine;
 
 namespace Boss
 {
-    [RequireComponent(typeof(BossController))]
-    [RequireComponent(typeof(BossAnimation))]
     public class BossHealth : MonoBehaviour, IDamageable
     {
-        private float maxHp;
-        private float currentHp;
+        public float MaxHp { get; private set; }
+        public float CurrentHp { get; private set; }
 
         private bool isDead;
         private bool phase2Triggered;
@@ -15,22 +13,21 @@ namespace Boss
         private BossController controller;
         private BossAnimation animationController;
 
-        public float MaxHp => maxHp;
-        public float CurrentHp => currentHp;
-
         private void Awake()
         {
             controller = GetComponent<BossController>();
             animationController = GetComponent<BossAnimation>();
         }
 
-        public void Initialize(float hp)
+        public void Initialize(float maxHp)
         {
-            maxHp = hp;
-            currentHp = hp;
+            MaxHp = maxHp;
+            CurrentHp = maxHp;
 
             isDead = false;
             phase2Triggered = false;
+
+            BossManager.Instance?.RegisterBoss(this);
         }
 
         public void TakeDamage(float damage)
@@ -38,20 +35,19 @@ namespace Boss
             if (isDead)
                 return;
 
-            currentHp -= damage;
-            currentHp = Mathf.Clamp(currentHp, 0f, maxHp);
+            CurrentHp -= damage;
 
-            animationController.PlayHit();
+            animationController?.PlayHit();
 
-            if (!phase2Triggered &&
-                currentHp <= maxHp * controller.BossData.phase2Threshold)
+            if (!phase2Triggered && CurrentHp <= MaxHp * 0.5f)
             {
                 phase2Triggered = true;
                 controller.StartPhaseTransition();
             }
 
-            if (currentHp <= 0f)
+            if (CurrentHp <= 0)
             {
+                CurrentHp = 0;
                 Die();
             }
         }
@@ -63,7 +59,6 @@ namespace Boss
 
             isDead = true;
 
-            animationController.PlayDeath();
             controller.HandleDeath();
         }
     }

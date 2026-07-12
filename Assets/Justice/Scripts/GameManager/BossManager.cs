@@ -5,41 +5,55 @@ public class BossManager : MonoBehaviour
 {
     public static BossManager Instance { get; private set; }
 
-    [Header("Current Progress")]
+    [Header("Dungeon Progress")]
     [SerializeField] private int currentStage = 1;
     [SerializeField] private int currentRoom = 1;
+
+    [Header("Reward UI")]
+    [SerializeField] private GameObject rewardSelectionUI;
 
     public int CurrentStage => currentStage;
     public int CurrentRoom => currentRoom;
 
     public BossHealth TargetBoss { get; private set; }
 
-    [Header("UI Reference")]
-    [SerializeField] private GameObject rewardSelectionUI;
-
     private void Awake()
     {
-        if (Instance == null) Instance = this;
-        else Destroy(gameObject);
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
+
+    #region Boss
 
     public void RegisterBoss(BossHealth boss)
     {
         TargetBoss = boss;
     }
 
-    public void OnBossKilled(BossController killedBoss)
+    public void ClearBoss()
     {
-        if (killedBoss == null) return;
-
-        Debug.Log($"보스 {killedBoss.gameObject.name} 처치 완료.");
-
         TargetBoss = null;
+    }
+
+    public void OnBossKilled(BossController boss)
+    {
+        if (boss == null)
+            return;
+
+        Debug.Log($"{boss.name} 처치 완료");
+
+        ClearBoss();
 
         if (currentRoom < 3)
         {
             currentRoom++;
-            Debug.Log($"다음 방으로 이동합니다. (현재 방: {currentRoom}/3)");
+            Debug.Log($"다음 방 ({currentRoom}/3)");
         }
         else
         {
@@ -47,26 +61,36 @@ public class BossManager : MonoBehaviour
         }
     }
 
+    #endregion
+
+    #region Reward
+
     private void OpenRewardUI()
     {
-        if (rewardSelectionUI != null)
-        {
-            rewardSelectionUI.SetActive(true);
-            Time.timeScale = 0f;
-        }
+        if (rewardSelectionUI == null)
+            return;
+
+        rewardSelectionUI.SetActive(true);
+        Time.timeScale = 0f;
     }
 
-    public void SelectReward(string rewardType)
+    public void SelectReward(string rewardName)
     {
-        Debug.Log($"플레이어가 [{rewardType}] 힘을 선택했습니다.");
-        Time.timeScale = 1f;
+        Debug.Log($"선택한 보상 : {rewardName}");
 
-        if (rewardSelectionUI != null)
-        {
-            rewardSelectionUI.SetActive(false);
-        }
+        CloseRewardUI();
 
         currentStage++;
         currentRoom = 1;
     }
+
+    private void CloseRewardUI()
+    {
+        Time.timeScale = 1f;
+
+        if (rewardSelectionUI != null)
+            rewardSelectionUI.SetActive(false);
+    }
+
+    #endregion
 }

@@ -1138,6 +1138,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fdab20e816c249a4f90e6e3b44ddbdc8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Portal
+  sceneName: Justice_BossRoom
 --- !u!1001 &206983286
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5689,7 +5690,16 @@ Tilemap:
   - serializedVersion: 2
     m_RefCount: 0
     m_Data: {fileID: 11400000, guid: 89be3abc25335b342b0424693ef088a8, type: 2}
-  m_TileSpriteArray: []
+  m_TileSpriteArray:
+  - serializedVersion: 2
+    m_RefCount: 0
+    m_Data: {fileID: 1257535981}
+  - serializedVersion: 2
+    m_RefCount: 0
+    m_Data: {fileID: 1235072352}
+  - serializedVersion: 2
+    m_RefCount: 0
+    m_Data: {fileID: 336743659}
   m_TileMatrixArray:
   - serializedVersion: 2
     m_RefCount: 10
@@ -6281,12 +6291,6 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.59375, y: 0.5}
   m_EdgeRadius: 0
---- !u!4 &565902628 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3395231547637130085, guid: 23bcabc7a108caa4083167ba36e18995,
-    type: 3}
-  m_PrefabInstance: {fileID: 308712217}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &573054229
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7689,7 +7693,13 @@ Tilemap:
   - serializedVersion: 2
     m_RefCount: 0
     m_Data: {fileID: 11400000, guid: 74fb019e61cfa1144910a53906988a6e, type: 2}
-  m_TileSpriteArray: []
+  m_TileSpriteArray:
+  - serializedVersion: 2
+    m_RefCount: 0
+    m_Data: {fileID: 734767511}
+  - serializedVersion: 2
+    m_RefCount: 0
+    m_Data: {fileID: 1983485855}
   m_TileMatrixArray:
   - serializedVersion: 2
     m_RefCount: 22
@@ -12301,7 +12311,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1204120972
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21553,8 +21563,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82c27f75dcb7ebd47a855e7ca1307797, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraFollow
-  target: {fileID: 565902628}
-  lerpSpeed: 8
+  followSpeed: 8
 --- !u!114 &1967102709
 MonoBehaviour:
   m_ObjectHideFlags: 0
