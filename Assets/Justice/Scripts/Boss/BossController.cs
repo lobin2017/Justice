@@ -157,6 +157,13 @@ namespace Boss
         {
             ChangeState(BossState.Death);
 
+            if (TryGetComponent<BossBattle.HouseBossController>(out var houseBoss))
+            {
+                houseBoss.Die();
+
+                return;
+            }
+
             BossManager.Instance?.ClearBoss();
 
             animationController.PlayDeath();

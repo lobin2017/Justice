@@ -1,90 +1,141 @@
-//using UnityEngine;
+using UnityEngine;
+using Boss;
 
-//namespace BossBattle
-//{
-//    [System.Serializable]
-//    public struct HouseProfile
-//    {
-//        public string houseName;
-//        public string leaderName;
-//        public string modifierPower;
-//    }
+namespace BossBattle
+{
+    [System.Serializable]
+    public struct HouseProfile
+    {
+        public string houseName;
+        public string leaderName;
+        public string modifierPower;
+    }
 
-//    public class HouseBossController : MonoBehaviour
-//    {
-//        [Header("House Info")]
-//        [SerializeField] private HouseBossType bossType;
+    public class HouseBossController : MonoBehaviour
+    {
+        [Header("Boss Data (ScriptableObject)")]
+        [SerializeField] private BossData bossData;
 
-//        [SerializeField] private HouseProfile profile;
+        [Header("House Info")]
+        [SerializeField] private BossType bossType;
+        [SerializeField] private HouseProfile profile;
 
-//        public HouseBossType BossType => bossType;
-//        public HouseProfile Profile => profile;
+        public BossType BossType => bossType;
+        public HouseProfile Profile => profile;
+        public BossData BossData => bossData;
 
-//        private void Awake()
-//        {
-//            InitializeProfile();
-//        }
+        private SpriteRenderer spriteRenderer;
+        private Collider2D bodyCollider;
+        private BossHealth bossHealth;
 
-//        private void InitializeProfile()
-//        {
-//            switch (bossType)
-//            {
-//                case HouseBossType.Valten_Aster:
-//                    profile.houseName = "House Valten";
-//                    profile.leaderName = "Aster";
-//                    profile.modifierPower = "집행";
-//                    break;
+        private void Awake()
+        {
+            spriteRenderer = GetComponent<SpriteRenderer>();
+            bodyCollider = GetComponent<Collider2D>();
+            bossHealth = GetComponent<BossHealth>();
 
-//                case HouseBossType.Serane_Caelis:
-//                    profile.houseName = "House Serane";
-//                    profile.leaderName = "Caelis";
-//                    profile.modifierPower = "순명";
-//                    break;
+            InitializeProfile();
+        }
 
-//                case HouseBossType.Ordel_Lucien:
-//                    profile.houseName = "House Ordel";
-//                    profile.leaderName = "Lucien";
-//                    profile.modifierPower = "규율";
-//                    break;
+        private void InitializeProfile()
+        {
+            if (bossData != null)
+            {
+                profile.leaderName = bossData.bossName;
+            }
 
-//                case HouseBossType.Verdan_Serin:
-//                    profile.houseName = "House Verdan";
-//                    profile.leaderName = "Serin";
-//                    profile.modifierPower = "충의";
-//                    break;
-//            }
-//        }
+            switch (bossType)
+            {
+                case BossType.Valten:
+                    profile.houseName = "House Valten";
+                    profile.modifierPower = "집행";
+                    break;
+                case BossType.Serane:
+                    profile.houseName = "House Serane";
+                    profile.modifierPower = "순명";
+                    break;
+                case BossType.Ordel:
+                    profile.houseName = "House Ordel";
+                    profile.modifierPower = "규율";
+                    break;
+                case BossType.Verdan:
+                    profile.houseName = "House Verdan";
+                    profile.modifierPower = "충의";
+                    break;
+            }
+        }
 
-//        public void OnBattleStart()
-//        {
-//            Debug.Log($"{profile.houseName} - {profile.leaderName} 전투 시작");
-//        }
+        public void InitializeBoss()
+        {
+            if (bossData == null)
+            {
+                Debug.LogError($"[{gameObject.name}] BossData가 할당되지 않았습니다!");
+                return;
+            }
 
-//        public void OnBattleEnd()
-//        {
-//            Debug.Log($"{profile.houseName} 전투 종료");
-//        }
+            if (bossHealth != null)
+            {
+                bossHealth.Initialize(bossData.maxHealth);
+            }
 
-//        public void OnEnterPhase2()
-//        {
-//            switch (bossType)
-//            {
-//                case HouseBossType.Valten_Aster:
-//                    Debug.Log("집행의 힘이 각성합니다.");
-//                    break;
+            Debug.Log($"{profile.leaderName} 초기화 완료 (체력: {bossData.maxHealth})");
+        }
 
-//                case HouseBossType.Serane_Caelis:
-//                    Debug.Log("순명의 의식이 시작됩니다.");
-//                    break;
+        public void SetBattleEngagement(bool isActive, Vector3 targetPosition)
+        {
+            transform.position = targetPosition;
 
-//                case HouseBossType.Ordel_Lucien:
-//                    Debug.Log("규율이 공간을 지배합니다.");
-//                    break;
+            if (spriteRenderer != null) spriteRenderer.enabled = isActive;
+            if (bodyCollider != null) bodyCollider.enabled = isActive;
 
-//                case HouseBossType.Verdan_Serin:
-//                    Debug.Log("충의가 극한까지 발현됩니다.");
-//                    break;
-//            }
-//        }
-//    }
-//}
+            if (TryGetComponent<BossController>(out var commonController))
+            {
+                commonController.enabled = isActive;
+            }
+
+            if (isActive) OnBattleStart();
+            else OnBattleEnd();
+        }
+
+        public void OnBattleStart()
+        {
+            Debug.Log($"<color=cyan>[참전]</color> {profile.houseName} - {profile.leaderName} 전장 진입");
+        }
+
+        public void OnBattleEnd()
+        {
+            Debug.Log($"<color=gray>[대기]</color> {profile.houseName} - {profile.leaderName} 대기 구역 이동");
+        }
+
+        public void ActivateBerserkMode()
+        {
+            Debug.Log($"<color=red>[폭주 각성]</color> {profile.leaderName} 가주가 제한을 해제합니다.");
+            OnEnterPhase2();
+        }
+
+        public void OnEnterPhase2()
+        {
+            switch (bossType)
+            {
+                case BossType.Valten:
+                    Debug.Log("집행의 힘이 각성합니다. (공격 시 고정 추가 피해)");
+                    break;
+                case BossType.Serane:
+                    Debug.Log("순명의 의식이 시작됩니다. (주기적 플레이어 속박)");
+                    break;
+                case BossType.Ordel:
+                    Debug.Log("규율이 공간을 지배합니다. (전장 영역 제한)");
+                    break;
+                case BossType.Verdan:
+                    Debug.Log("충의가 극한까지 발현됩니다. (남은 가주에게 보호막 부여)");
+                    break;
+            }
+        }
+
+        public void Die()
+        {
+            HouseWarManager.Instance.ReportBossDeath(this);
+            gameObject.SetActive(false);
+        }
+    }
+}
