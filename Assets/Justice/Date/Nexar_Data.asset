@@ -14,8 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Boss.BossData
   bossType: 0
   bossName: "\uB9C8\uC655 \uC774\uB984"
-  maxHealth: 100
+  maxHealth: 200
   moveSpeed: 3
   attackRange: 2
   attackCooldown: 2
   damage: 10
+  phase2Threshold: 0.5

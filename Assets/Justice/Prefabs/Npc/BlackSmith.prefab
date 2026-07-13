@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2354782180383505405}
   - component: {fileID: 1201087998282786584}
   - component: {fileID: 8587730396044267520}
+  - component: {fileID: -750325831770613159}
   m_Layer: 20
   m_Name: BlackSmith
   m_TagString: Npc
@@ -104,7 +105,7 @@ Animator:
   m_GameObject: {fileID: 508322419749331945}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: c21a067e43f36734398c154d6d3c14ac, type: 2}
+  m_Controller: {fileID: 9100000, guid: 419045585ca9d0f4cbaeeb23b51b21c9, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -162,3 +163,16 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.5, y: 0.5}
   m_EdgeRadius: 0
+--- !u!114 &-750325831770613159
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 508322419749331945}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 630be348ac33d4c4cab5e93db7c08aff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BlackSmithInteraction
+  dialogueUI: {fileID: 0}
