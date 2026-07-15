@@ -37,7 +37,7 @@ namespace BossBattle
 
         private void Start()
         {
-            foreach (var boss in FindObjectsOfType<HouseBossController>())
+            foreach (var boss in Object.FindObjectsByType<HouseBossController>())
             {
                 if (!allBosses.Contains(boss)) allBosses.Add(boss);
                 boss.InitializeBoss();

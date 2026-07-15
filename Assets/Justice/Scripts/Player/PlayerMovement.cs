@@ -2,14 +2,14 @@ using Player;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
-[RequireComponent(typeof(PlayerAnimationController))]
+[RequireComponent(typeof(PlayerAnimation))]
 public class PlayerMovement : MonoBehaviour
 {
     [Header("Movement")]
     [SerializeField] private float moveSpeed = 5f;
 
     private Rigidbody2D rb;
-    private PlayerAnimationController animationController;
+    private PlayerAnimation animationController;
     private PlayerInputActions inputActions;
 
     private Vector2 moveInput;
@@ -17,7 +17,7 @@ public class PlayerMovement : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        animationController = GetComponent<PlayerAnimationController>();
+        animationController = GetComponent<PlayerAnimation>();
 
         inputActions = new PlayerInputActions();
 

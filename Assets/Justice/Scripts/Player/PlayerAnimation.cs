@@ -10,7 +10,7 @@ namespace Player
     }
 
     [RequireComponent(typeof(Animator))]
-    public class PlayerAnimationController : MonoBehaviour
+    public class PlayerAnimation : MonoBehaviour
     {
         private Animator animator;
         private string currentAnimationState;
