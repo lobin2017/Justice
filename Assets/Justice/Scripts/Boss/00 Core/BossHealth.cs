@@ -1,7 +1,7 @@
 using UnityEngine;
 using GameManager;
 
-namespace Boss
+namespace Core
 {
     public class BossHealth : MonoBehaviour, IDamageable
     {

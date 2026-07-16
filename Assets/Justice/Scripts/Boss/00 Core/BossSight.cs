@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Boss
+namespace Core
 {
     public class BossSight : MonoBehaviour
     {

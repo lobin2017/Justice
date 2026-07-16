@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Boss
+namespace Core
 {
     [RequireComponent(typeof(BossController))]
     [RequireComponent(typeof(BossAnimation))]

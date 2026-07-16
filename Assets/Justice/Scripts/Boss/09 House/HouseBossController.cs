@@ -1,5 +1,5 @@
 using UnityEngine;
-using Boss;
+using Core;
 using GameManager;
 
 
