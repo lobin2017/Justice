@@ -10,8 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 3395231547637130085}
   - component: {fileID: 1094221640036882094}
-  - component: {fileID: 7096070831390396082}
+  - component: {fileID: 3865708233662551737}
   - component: {fileID: 7130519339140325273}
+  - component: {fileID: -1155102156557880582}
+  - component: {fileID: 7451402100195234925}
   - component: {fileID: 7007547886059467175}
   - component: {fileID: 8692676266456002648}
   - component: {fileID: 3371467042095843102}
@@ -52,7 +54,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
   moveSpeed: 5
---- !u!114 &7096070831390396082
+--- !u!114 &3865708233662551737
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -63,10 +65,10 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 79a9310fda5b5ee468345688a7af63c6, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerAttack
-  weaponDamage: 5
+  m_EditorClassIdentifier: Assembly-CSharp::Player.PlayerAttack
+  weaponDamage: 10
   attackDistance: 3
-  weaponDelay: 1
+  attackDelay: 0.5
   attackAngle: 70
 --- !u!114 &7130519339140325273
 MonoBehaviour:
@@ -81,6 +83,34 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
   maxHp: 200
+--- !u!114 &-1155102156557880582
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9069316028987014414}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ede577b66f445a478ae029e90b084f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Player.PlayerInput
+--- !u!114 &7451402100195234925
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9069316028987014414}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f7922f60b996cb419db89c57eb89898, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Player.PlayerStatus
+  currentHouse: 0
+  blindnessCooldown: 60
+  loyaltyCooldown: 4
+  staminaReturnAmount: 15
 --- !u!212 &7007547886059467175
 SpriteRenderer:
   serializedVersion: 2

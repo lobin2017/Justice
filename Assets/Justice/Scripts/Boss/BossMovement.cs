@@ -6,7 +6,7 @@ namespace Boss
     public class BossMovement : MonoBehaviour
     {
         private Rigidbody2D rb;
-        private float moveSpeed;
+        private float currentMoveSpeed;
 
         private void Awake()
         {
@@ -15,12 +15,12 @@ namespace Boss
 
         public void Initialize(float speed)
         {
-            moveSpeed = speed;
+            currentMoveSpeed = speed;
         }
 
         public void Move(Vector2 direction)
         {
-            rb.linearVelocity = direction.normalized * moveSpeed;
+            rb.linearVelocity = direction.normalized * currentMoveSpeed;
         }
 
         public void Stop()

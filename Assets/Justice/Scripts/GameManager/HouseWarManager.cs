@@ -1,9 +1,8 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-namespace BossBattle
+namespace GameManager
 {
-    public enum HouseBossType { Valten_Aster, Serane_Caelis, Ordel_Lucien, Verdan_Serin }
     public enum BattlePhase { Phase_1, Phase_2 }
 
     public class HouseWarManager : MonoBehaviour

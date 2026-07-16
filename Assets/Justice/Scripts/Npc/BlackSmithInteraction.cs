@@ -1,4 +1,5 @@
 using UnityEngine;
+using Player;
 
 public class BlackSmithInteraction : MonoBehaviour
 {
@@ -11,7 +12,7 @@ public class BlackSmithInteraction : MonoBehaviour
 
     private void Awake()
     {
-        inputActions = new PlayerInputActions();
+        inputActions = PlayerInput.Instance.Actions;
     }
 
     private void OnEnable()

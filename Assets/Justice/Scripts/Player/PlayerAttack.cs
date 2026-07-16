@@ -1,6 +1,6 @@
 using Boss;
 using UnityEngine;
-using UnityEngine.InputSystem;
+using GameManager;
 
 namespace Player
 {
@@ -21,7 +21,7 @@ namespace Player
 
         private void Awake()
         {
-            inputActions = new PlayerInputActions();
+            inputActions = PlayerInput.Instance.Actions;
             mainCamera = Camera.main;
         }
 

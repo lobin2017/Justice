@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Lobby
+namespace Player
 {
     public enum HouseType
     {

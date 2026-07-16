@@ -1,4 +1,5 @@
 using UnityEngine;
+using GameManager;
 
 namespace Boss
 {

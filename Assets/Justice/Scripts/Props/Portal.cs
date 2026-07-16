@@ -1,6 +1,6 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using Player;
 
 public class Portal : MonoBehaviour
 {
@@ -8,13 +8,18 @@ public class Portal : MonoBehaviour
 
     private bool canEnter;
 
+    private PlayerInputActions inputActions;
+
+    private void Awake()
+    {
+        inputActions = PlayerInput.Instance.Actions;
+    }
     private void Update()
     {
         if (!canEnter)
             return;
 
-        if (Keyboard.current != null &&
-            Keyboard.current.eKey.wasPressedThisFrame)
+        if (inputActions.Player.Interact.WasPressedThisFrame())
         {
             EnterDungeon();
         }

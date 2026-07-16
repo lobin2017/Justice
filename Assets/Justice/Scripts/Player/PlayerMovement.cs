@@ -19,7 +19,7 @@ public class PlayerMovement : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         animationController = GetComponent<PlayerAnimation>();
 
-        inputActions = new PlayerInputActions();
+        inputActions = PlayerInput.Instance.Actions;
 
         if (rb == null)
             Debug.LogError($"{name} : Rigidbody2D가 없습니다.");

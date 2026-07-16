@@ -1,4 +1,5 @@
 using UnityEngine;
+using GameManager;
 
 namespace Boss
 {
@@ -22,6 +23,9 @@ namespace Boss
         private BossHealth health;
         private BossAnimation animationController;
 
+        private float currentMoveSpeed;
+        private float currentDamage;
+
         public BossType BossType => bossData.bossType;
         public BossData BossData => bossData;
 
@@ -34,6 +38,9 @@ namespace Boss
             attack = GetComponent<BossAttack>();
             health = GetComponent<BossHealth>();
             animationController = GetComponent<BossAnimation>();
+
+            currentMoveSpeed = bossData.moveSpeed;
+            currentDamage = bossData.damage;
         }
 
         private void Start()
@@ -45,12 +52,12 @@ namespace Boss
                 return;
             }
 
-            movement.Initialize(bossData.moveSpeed);
+            movement.Initialize(currentMoveSpeed);
 
             attack.Initialize(
                 bossData.attackRange,
                 bossData.attackCooldown,
-                bossData.damage);
+                currentDamage);
 
             health.Initialize(bossData.maxHealth);
         }
@@ -141,10 +148,10 @@ namespace Boss
 
             animationController.PlayPhaseTransition();
 
-            bossData.moveSpeed *= 1.3f;
-            bossData.damage *= 1.5f;
+            currentMoveSpeed *= 1.3f;
+            currentDamage *= 1.5f;    
 
-            movement.Initialize(bossData.moveSpeed);
+            movement.Initialize(currentMoveSpeed);
 
             Invoke(nameof(EndPhaseTransition), 1.5f);
         }
@@ -157,7 +164,7 @@ namespace Boss
         {
             ChangeState(BossState.Death);
 
-            if (TryGetComponent<BossBattle.HouseBossController>(out var houseBoss))
+            if (TryGetComponent<HouseBossController>(out var houseBoss))
             {
                 houseBoss.Die();
 
