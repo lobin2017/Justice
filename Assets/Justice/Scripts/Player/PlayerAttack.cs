@@ -1,6 +1,6 @@
 using Core;
-using UnityEngine;
 using GameManager;
+using UnityEngine;
 
 namespace Player
 {
@@ -16,6 +16,8 @@ namespace Player
 
         private Camera mainCamera;
         private PlayerInputActions inputActions;
+        private PlayerAnimation playerAnimation;
+        private CurseManager curseManager;
 
         private Vector2 aimDirection;
 
@@ -23,6 +25,7 @@ namespace Player
         {
             inputActions = PlayerInput.Instance.Actions;
             mainCamera = Camera.main;
+            playerAnimation = GetComponent<PlayerAnimation>();
         }
 
         private void OnEnable()
@@ -41,6 +44,7 @@ namespace Player
 
             if (inputActions.Player.Attack.WasPressedThisFrame())
             {
+
                 if (Time.time >= lastAttackTime + attackDelay)
                 {
                     lastAttackTime = Time.time;
@@ -90,6 +94,8 @@ namespace Player
 
             if (dot < limit)
                 return;
+
+            playerAnimation.UpdateAnimation(aimDirection, PlayerState.Attack);
 
             boss.TakeDamage(weaponDamage);
 

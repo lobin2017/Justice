@@ -21,11 +21,6 @@ public class PlayerMovement : MonoBehaviour
 
         inputActions = PlayerInput.Instance.Actions;
 
-        if (rb == null)
-            Debug.LogError($"{name} : Rigidbody2D가 없습니다.");
-
-        if (animationController == null)
-            Debug.LogError($"{name} : PlayerAnimationController가 없습니다.");
     }
 
     private void OnEnable()

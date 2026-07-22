@@ -6,7 +6,8 @@ namespace Player
     {
         Idle,
         Walk,
-        Dead
+        Attack,
+        Death
     }
 
     [RequireComponent(typeof(Animator))]
@@ -26,11 +27,6 @@ namespace Player
         private void Awake()
         {
             animator = GetComponent<Animator>();
-
-            if (animator == null)
-            {
-                Debug.LogError($"{name} : Animator가 없습니다.");
-            }
         }
 
         public void UpdateAnimation(Vector2 direction, PlayerState state)

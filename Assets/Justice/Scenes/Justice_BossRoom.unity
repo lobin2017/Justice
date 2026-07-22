@@ -497,7 +497,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!1001 &203431775
+--- !u!1001 &271265345
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -508,12 +508,12 @@ PrefabInstance:
     - target: {fileID: 3395231547637130085, guid: 23bcabc7a108caa4083167ba36e18995,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.69203
+      value: -0.33178
       objectReference: {fileID: 0}
     - target: {fileID: 3395231547637130085, guid: 23bcabc7a108caa4083167ba36e18995,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.70566
+      value: 1.59379
       objectReference: {fileID: 0}
     - target: {fileID: 3395231547637130085, guid: 23bcabc7a108caa4083167ba36e18995,
         type: 3}
@@ -559,11 +559,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Player
-      objectReference: {fileID: 0}
-    - target: {fileID: 9069316028987014414, guid: 23bcabc7a108caa4083167ba36e18995,
-        type: 3}
-      propertyPath: m_Layer
-      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -6079,5 +6074,5 @@ SceneRoots:
   - {fileID: 1950850966}
   - {fileID: 1807044107}
   - {fileID: 93520233}
-  - {fileID: 203431775}
   - {fileID: 342014632}
+  - {fileID: 271265345}
