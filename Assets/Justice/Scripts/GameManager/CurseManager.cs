@@ -15,7 +15,8 @@ namespace GameManager
     public class CurseManager : MonoBehaviour
     {
         private List<CurseType> activeCurses;
-        
+
+        private float curseDuration = 3f;
         private void Awake()
         {
             activeCurses = new List<CurseType>();

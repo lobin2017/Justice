@@ -10,7 +10,6 @@ namespace Nexar
 
         private CurseManager curseManager;
 
-
         private void Awake()
         {
             curseManager = GetComponent<CurseManager>();
@@ -20,19 +19,17 @@ namespace Nexar
         {
             curseManager.ApplyCurse(CurseType.Faith);
         }
-        private void CreateWarning()
+        public void UseEnduranceCurse()
         {
-            Vector2 position = transform.position;
-
-            Instantiate(
-                warningPrefab,
-                position,
-                Quaternion.identity
-            );
+            curseManager.ApplyCurse(CurseType.Endurance);
         }
-        private void Start()
+        public void UseDevotionCurse()
         {
-            UseFaithCurse();
+            curseManager.ApplyCurse(CurseType.Devotion);
+        }
+        public void UseDutyCurse()
+        {
+            curseManager.ApplyCurse(CurseType.Duty);
         }
     }
 }
